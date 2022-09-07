@@ -1,0 +1,13 @@
+// Кузнецов Егор, НГУ, 2022
+// 1) Написать фукнцию, преобразующую массив целых чисел
+//  в массив строк, например: [1, 2, 3] в ["1", "2", "3"],
+//  распечатать этот массив. Использовать функции: map, i2s,
+//  strGlue, println.
+import runtime;
+import string;
+
+main() {
+	array_of_int = [1, 2, 3];
+	array_of_strings = map (array_of_int, \i -> i2s(i));
+	println(array_of_strings);
+}
