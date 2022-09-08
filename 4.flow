@@ -1,0 +1,46 @@
+// Кузнецов Егор, НГУ, 2022
+// 4) Дан массив целых чисел [n_1,...,n_k] и число m.
+// Найти все пары индексов (i, j) такие, что n_i + n_j == m.
+// Сигнатура функции: inds(a : [int], m : int) -> [Pair<int, int>].
+// Усложнение: сделать эту функцию сложности O(n log(n)), а не O(n^2).
+// Использовать функции: foldi, makeTree, setTree, lookupTree.
+import runtime;
+
+inds(a : [int], m : int) -> [Pair<int, int>];
+whileSmallerThanM(a : [int], left_boundary : int, right_boundary : int, m : int) -> void;
+
+whileSmallerThanM(a, left_boundary, right_boundary, m){
+    if((right_boundary <= lenght(a))&& (a[left_boundary] + a[right_boundary] < m)){
+        right_boundary = right_boundary + 1;
+        whileSmallerThanM(a, left_boundary, right_boundary, m);
+    }
+}
+
+inds(a, m){
+    a = sort(a);
+    res = [];
+    int right_boundary = 0;
+
+    mapi(a, \left_boundary, v -> {
+        whileSmallerThanM(a, left_boundary, right_boundary, m);
+        
+        int delta = 0;
+
+        while(a[left_boundary] + a[right_boundary + delta] == m){
+            concat(res, [Pair(left_boundary, right_boundary + delta)]);
+            delta = delta + 1;
+        }
+
+        v;
+    });
+
+    res;
+}
+
+main(){
+    int_array[1, 2, 3, 4, 5, 6];
+    int m = 6;
+
+    inds(int_array, m);
+
+}

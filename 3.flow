@@ -11,17 +11,18 @@ import string;
 
 fib(n : int) -> [int];
 
-fib(n) {
+fib(n){
     if(n == 0){
-        0;
+        [0];
     } else if(n == 1){
-        1;
+        [0, 1];
     } else{
-        fib(n - 1) + fib(n - 2);
+        concat(fib(n - 1), [fib(n - 1)[n - 1] + fib(n - 2)[n - 2]]);
     }
 }
 
+
+
 main(){
-    println("а) Рекурсивная: " + fib(6));
-    println("б) Хвостовая рекурсия: " + )
+    println(fib(6));
 }
