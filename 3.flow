@@ -9,20 +9,55 @@
 import runtime;
 import string;
 
-fib(n : int) -> [int];
+fib_a(n : int) -> int;
+fib_a_array(n : int) -> [int];
+fib_b(n : int) -> [int];
+fib_c(int_array : ref [int], n : int) -> [int];
 
-fib(n){
+fib_a(n){
+    if(n == 0){
+        0;
+    } else if(n==1){
+        1;
+    } else{
+        fib_a(n - 1) + fib_a(n - 2);
+    }
+}
+
+fib_a_array(n){
+    map(enumFromTo(0, n), fib_a);
+}
+
+fib_b(n){
     if(n == 0){
         [0];
     } else if(n == 1){
         [0, 1];
     } else{
-        concat(fib(n - 1), [fib(n - 1)[n - 1] + fib(n - 2)[n - 2]]);
+        concat(fib_b(n - 1), [fib_b(n - 1)[n - 1] + fib_b(n - 2)[n - 2]]);
     }
 }
 
-
+fib_c(int_array, n){
+    if(n == 0){
+        refArrayPush(int_array, 0);
+        ^int_array;
+    } else if(n == 1){
+        refArrayPush(int_array, 0);
+        refArrayPush(int_array, 1);
+        ^int_array;
+    } else{
+        fib_c(int_array, n - 1);
+        refArrayPush(int_array, (^int_array)[n - 1] + (^int_array)[n - 2]);
+        ^int_array;
+    }
+}
 
 main(){
-    println(fib(6));
+    println(fib_a_array(6));
+    println(fib_b(6));
+
+    int_array: ref [int] = ref [];
+
+    println(fib_c(int_array, 6));
 }
