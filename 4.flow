@@ -5,43 +5,46 @@
 // Усложнение: сделать эту функцию сложности O(n log(n)), а не O(n^2).
 // Использовать функции: foldi, makeTree, setTree, lookupTree.
 import runtime;
+import algorithms;
 
-inds(a : [int], m : int) -> [Pair<int, int>];
-whileSmallerThanM(a : [int], left_boundary : int, right_boundary : ref int, m : int) -> void;
-whileEqualM(a : [int], left_boundary : int, right_boundary : int, m : int, delta : int, res : [int]) -> void;
+inds(int_array : [int], m : int) -> [Pair<int, int>];
+whileSmallerThanM(int_array : [int], left_boundary : int, right_boundary : ref int, m : int) -> void;
+whileEqualM(int_array : [int], left_boundary : int, right_boundary : int, m : int, delta : int, res : ref [Pair<int, int>]) -> void;
 
-whileSmallerThanM(a, left_boundary, right_boundary, m){
-    if((^right_boundary < lenght(a))&& (a[left_boundary] + a[^right_boundary] < m)){
+whileSmallerThanM(int_array, left_boundary, right_boundary, m){
+    if((^right_boundary < length(int_array))
+        && (int_array[left_boundary] + int_array[^right_boundary] < m)){
         right_boundary := ^right_boundary + 1;
-        whileSmallerThanM(a, left_boundary, right_boundary, m);
+        whileSmallerThanM(int_array, left_boundary, right_boundary, m);
     }
 }
 
-whileEqualM(a, left_boundary, right_boundary, m, delta, res){
-    if((right_boundary + delta < length(a)) && (a[left_boundary] + a[right_boundary + delta] == m)){
-        concat(res, [Pair(left_boundary, right_boundary + delta)]);
+whileEqualM(int_array, left_boundary, right_boundary, m, delta, res){
+    if((right_boundary + delta < length(int_array)) && (int_array[left_boundary] + int_array[right_boundary + delta] == m)){
+        res := concat(^res, [Pair(left_boundary, right_boundary + delta)]);
+        println("Done!");
         delta_plus_one = delta + 1;
-        whileEqualM(a, left_boundary, right_boundary, m, delta_plus_one);
+        whileEqualM(int_array, left_boundary, right_boundary, m, delta_plus_one, res);
     }
 }
 
-inds(a, m){
-    a = sort(a);
-    res = [];
+inds(int_array, m){
+    int_array_sorted = sort(int_array);
+    res: ref [Pair<int, int>] = ref[];
     right_boundary : ref int = ref 0;
 
-    mapi(array, \left_boundary, v -> {
-        whileSmallerThanM(array, left_boundary, right_boundary, m);        
+    mapi(int_array, \left_boundary, v -> {
+        whileSmallerThanM(int_array_sorted, left_boundary, right_boundary, m);        
         delta = 0;
-        whileEqualM(array, left_boundary, ^right_boundary, m, delta);
+        whileEqualM(int_array_sorted, left_boundary, ^right_boundary, m, delta, res);
         v;
     });
 
-    res;
+    ^res;
 }
 
 main(){
     int_array = [1, 2, 3, 4, 5, 6];
-    m = 6;
+    m = 7;
     println(inds(int_array, m));
 }
