@@ -12,17 +12,15 @@ whileSmallerThanM(int_array : [int], left_boundary : int, right_boundary : ref i
 whileEqualM(int_array : [int], left_boundary : int, right_boundary : int, m : int, delta : int, res : ref [Pair<int, int>]) -> void;
 
 whileSmallerThanM(int_array, left_boundary, right_boundary, m){
-    if((^right_boundary < length(int_array))
-        && (int_array[left_boundary] + int_array[^right_boundary] < m)){
-        right_boundary := ^right_boundary + 1;
+    if((^right_boundary > 0) && (int_array[left_boundary] + int_array[^right_boundary] > m)){
+        right_boundary := ^right_boundary - 1;
         whileSmallerThanM(int_array, left_boundary, right_boundary, m);
     }
 }
 
 whileEqualM(int_array, left_boundary, right_boundary, m, delta, res){
-    if((right_boundary + delta < length(int_array)) && (int_array[left_boundary] + int_array[right_boundary + delta] == m)){
+    if((right_boundary - delta >= 0) && (left_boundary < right_boundary - delta) && (int_array[left_boundary] + int_array[right_boundary - delta] == m)){
         res := concat(^res, [Pair(left_boundary, right_boundary + delta)]);
-        println("Done!");
         delta_plus_one = delta + 1;
         whileEqualM(int_array, left_boundary, right_boundary, m, delta_plus_one, res);
     }
@@ -30,8 +28,8 @@ whileEqualM(int_array, left_boundary, right_boundary, m, delta, res){
 
 inds(int_array, m){
     int_array_sorted = sort(int_array);
-    res: ref [Pair<int, int>] = ref[];
-    right_boundary : ref int = ref 0;
+    res: ref [Pair<int, int>] = ref [];
+    right_boundary : ref int = ref length(int_array) - 1;
 
     mapi(int_array, \left_boundary, v -> {
         whileSmallerThanM(int_array_sorted, left_boundary, right_boundary, m);        
@@ -44,7 +42,7 @@ inds(int_array, m){
 }
 
 main(){
-    int_array = [1, 2, 3, 4, 5, 6];
-    m = 7;
+    int_array = [1, 1, 3, 4, 5, 6];
+    m = 5;
     println(inds(int_array, m));
 }
