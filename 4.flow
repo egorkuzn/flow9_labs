@@ -20,7 +20,7 @@ whileSmallerThanM(int_array, left_boundary, right_boundary, m){
 
 whileEqualM(int_array, left_boundary, right_boundary, m, delta, res){
     if((right_boundary - delta >= 0) && (left_boundary < right_boundary - delta) && (int_array[left_boundary] + int_array[right_boundary - delta] == m)){
-        res := concat(^res, [Pair(left_boundary, right_boundary + delta)]);
+        res := concat(^res, [Pair(left_boundary, right_boundary - delta)]);
         delta_plus_one = delta + 1;
         whileEqualM(int_array, left_boundary, right_boundary, m, delta_plus_one, res);
     }
