@@ -1,0 +1,8 @@
+arithmetical_exp = addition | multiplication | integer;
+white_space = (" " | "\t" | "\n" | "\r")*;
+
+addition = white_space "(" white_space arithmetical_exp:left white_space "+" white_space arithmetical_exp:rigth white_space ")" white_space {Addition(:left, :rigth)};
+multiplication = white_space "(" white_space arithmetical_exp:left white_space "*" white_space arithmetical_exp:right white_space ")" white_space {Multiplication(:left, :right)};
+
+integer = white_space digit+$digit white_space {Integer(s2i($digit))};
+digit = '0' - '9';

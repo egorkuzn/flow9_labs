@@ -1,0 +1,23 @@
+// 5) Написать PEG-парсер грамматики простых
+// арифметических выражений, генерирующий AST дерево.
+// (используя быблиотеку lingo)
+
+import runtime;
+import lingo/pegcode/driver;
+
+ArithmeticsExpression ::= Addition, Multiplication, Integer;
+Addition(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Integer(val : int);
+
+
+s2AST(s : string) -> ArithmeticsExpression {
+    arithmetics_grammar = "#include labs\2nd-block\5\arithmetics.lingo";
+    parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
+}
+
+main(){
+    AST = s2AST(" (2 + (2 * (2 + 2))) ");
+    println(AST);
+    quit(0);
+}
