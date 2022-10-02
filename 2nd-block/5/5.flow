@@ -3,11 +3,14 @@
 // (используя быблиотеку lingo)
 
 import runtime;
+import sys/system;
 import lingo/pegcode/driver;
 
-ArithmeticsExpression ::= Addition, Multiplication, Integer;
+ArithmeticsExpression ::= Addition, Multiplication, Substruction, Division, Integer;
 Addition(left : ArithmeticsExpression, right : ArithmeticsExpression);
 Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Substruction(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Division(left : ArithmeticsExpression, right : ArithmeticsExpression);
 Integer(val : int);
 
 
@@ -17,7 +20,8 @@ s2AST(s : string) -> ArithmeticsExpression {
 }
 
 main(){
-    AST = s2AST(" (2 + (2 * (2 + 2))) ");
+    s = readUntil("\n");
+    AST = s2AST(s);
     println(AST);
     quit(0);
 }
