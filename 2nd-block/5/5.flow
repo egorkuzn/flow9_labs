@@ -1,8 +1,8 @@
-// 5) Написать PEG-парсер грамматики простых
-// арифметических выражений, генерирующий AST дерево.
-// (используя быблиотеку lingo)
+// 7) Реализовать калькулятор, вычисляющий
+// значение арифметического выражения.
 
 import runtime;
+import string;
 import sys/system;
 import lingo/pegcode/driver;
 
@@ -15,13 +15,47 @@ Integer(val : int);
 
 
 s2AST(s : string) -> ArithmeticsExpression {
-    arithmetics_grammar = "#include labs\2nd-block\5\arithmetics.lingo";
+    arithmetics_grammar = "#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo";
     parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
+}
+
+AST2s(exp : ArithmeticsExpression) -> string{
+    switch(exp) {
+        Addition(l, r):
+            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
+        Multiplication(l, r):
+            concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
+        Substruction(l, r):
+            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
+        Division(l, r):
+            concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
+        Integer(val):
+            i2s(val);
+    }
+}
+
+AST2i(exp : ArithmeticsExpression) -> int{
+    switch(exp) {
+        Integer(val):
+            val;
+        Addition(l, r):
+            AST2i(l) + AST2i(r);
+        Multiplication(l, r):
+            AST2i(l) * AST2i(r);
+        Substruction(l, r):
+            AST2i(l) - AST2i(r);
+        Division(l, r):{
+            right_part = AST2i(r);
+            assert(right_part != 0, "Division by zero");
+            AST2i(l) / right_part;
+        }
+    }
 }
 
 main(){
     s = readUntil("\n");
-    AST = s2AST(s);
-    println(AST);
+    println(s2AST(s));
+    println(AST2s(s2AST(s)));
+    println(AST2i(s2AST(s)));
     quit(0);
 }
