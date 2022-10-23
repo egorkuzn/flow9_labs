@@ -6,11 +6,11 @@ import sys/system;
 import lingo/pegcode/driver;
 
 ArithmeticsExpression ::= Addition, Multiplication, Substruction, Division, Integer;
-Addition(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Addition      (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Substruction(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Division(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Integer(val : int);
+Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
+Division      (left : ArithmeticsExpression, right : ArithmeticsExpression);
+Integer       (val : int);
 
 AST2RPN(AST: Exp) -> {
 }
