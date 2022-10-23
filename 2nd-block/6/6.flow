@@ -30,7 +30,7 @@ RPNGrammar() {
     });
 }
 
-AST2RPN(AST: Exp) -> {
+AST2RPN(AST: ArithmeticsExpression) -> string {
     switch (AST) {
         Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "*)"]);
         Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "/)"]);
@@ -41,11 +41,11 @@ AST2RPN(AST: Exp) -> {
     }
 }
 
-RNP2AST(RPN: Exp) -> Exp {
-    parsic(compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\rpn.lingo"), RPN, defaultPegActions);
+RNP2AST(RPN: string) -> ArithmeticsExpression {
+    parsic(RPNGrammar(), RPN, defaultPegActions);
 }
 
-AST2s(AST: Exp) -> string {
+AST2s(AST: ArithmeticsExpression) -> string {
     switch (AST) {
         Multiplication(l, r): concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
         Division      (l, r): concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
@@ -57,10 +57,10 @@ AST2s(AST: Exp) -> string {
 }
 
 s2AST(s: string) {
-    parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
+    parsic(arithmeticsGrammar(), s, defaultPegActions);
 }
 
-AST2d(AST: Exp, varsTree: Tree<string, double>) -> double {
+AST2d(AST: ArithmeticsExpression, varsTree: Tree<string, double>) -> double {
     switch (AST) {
         Multiplication(l, r): AST2d(l, varsTree) * AST2d(r, varsTree);
         Division      (l, r): AST2d(l, varsTree) / AST2d(r, varsTree);
@@ -75,8 +75,8 @@ s2RPN(s : string) -> string {
     AST2RPN(s2AST(s));
 }
 
-RPN2s(s : string) -> string {
-    AST2s(RNP2AST(s));
+RPN2s(RPN : string) -> string {
+    AST2s(RNP2AST(RPN));
 }
 
 putVarInTree() -> Tree<string, double> {
