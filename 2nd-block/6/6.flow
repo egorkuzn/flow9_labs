@@ -4,7 +4,7 @@ import runtime;
 import string;
 import math/math;
 import sys/system;
-import lindo/pegcode/parsic;
+import lingo/pegcode/parsic;
 import lingo/pegcode/driver;
 
 ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Variable, Double;
