@@ -31,15 +31,17 @@ RPNGrammar() {
 }
 
 AST2RPN(AST: Exp) -> {
+    switch (AST) {
 
+    }
 }
 
 RNP2AST(RPN: Exp) -> Exp {
-
+    parsic(compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\rpn.lingo"), RPN, defaultPegActions);
 }
 
 AST2s(AST: Exp) -> string {
-    switch(exp) {
+    switch (AST) {
         Multiplication(l, r): concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
         Division      (l, r): concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
         Addition      (l, r): concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
