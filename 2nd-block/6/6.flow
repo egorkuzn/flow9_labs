@@ -7,30 +7,32 @@ import sys/system;
 import lingo/pegcode/parsic;
 import lingo/pegcode/driver;
 
-ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Variable, Double;
+ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Double, Variable;
 
 Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
 Division      (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Addition      (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
-Variable      (var  : string);
 Double        (val  : double);
+Variable      (var  : string);
 
-calcGrammarInited : ref Maybe<[PegOp]> = ref None();
+arithmeticGrammarInited : ref Maybe<[PegOp]> = ref None();
+RPNGrammarInited : ref Maybe<[PegOp]> = ref None();
+
 
 arithmeticsGrammar() {
-    onlyOnce(calcGrammarInited, \ -> {
+    onlyOnce(arithmeticGrammarInited, \ -> {
         compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo")
     });
 }
 
 RPNGrammar() {
-    onlyOnce(calcGrammarInited, \ -> {
+    onlyOnce(RPNGrammarInited, \ -> {
         compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\RPN.lingo")
     });
 }
 
-AST2RPN(AST: ArithmeticsExpression) -> string {
+AST2RPN(AST : ArithmeticsExpression) -> string {
     switch (AST) {
         Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " *)"]);
         Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " /)"]);
@@ -40,27 +42,23 @@ AST2RPN(AST: ArithmeticsExpression) -> string {
         Variable      (var) : var;
     }
 }
-// failed to parse
-RNP2AST(RPN: string) ->  ArithmeticsExpression{
-    parsic(RPNGrammar(), RPN, defaultPegActions);
-}
 
-AST2s(AST: ArithmeticsExpression) -> string {
+AST2s(AST : ArithmeticsExpression) -> string {
     switch (AST) {
-        Multiplication(l, r): concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
-        Division      (l, r): concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
-        Addition      (l, r): concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
-        Substruction  (l, r): concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
+        Multiplication(l, r): concatStrings(["(", AST2s(l), " * ", AST2s(r), ")"]);
+        Division      (l, r): concatStrings(["(", AST2s(l), " / ", AST2s(r), ")"]);
+        Addition      (l, r): concatStrings(["(", AST2s(l), " + ", AST2s(r), ")"]);
+        Substruction  (l, r): concatStrings(["(", AST2s(l), " - ", AST2s(r), ")"]);
         Double        (val) : d2s(val);
         Variable      (var) : var;
     }
 }
 
-s2AST(s: string) -> ArithmeticsExpression{
+s2AST(s : string) -> ArithmeticsExpression{
     parsic(arithmeticsGrammar(), s, defaultPegActions);
 }
 
-AST2d(AST: ArithmeticsExpression, varsTree: Tree<string, double>) -> double {
+AST2d(AST : ArithmeticsExpression, varsTree: Tree<string, double>) -> double {
     switch (AST) {
         Multiplication(l, r): AST2d(l, varsTree) * AST2d(r, varsTree);
         Division      (l, r): AST2d(l, varsTree) / AST2d(r, varsTree);
@@ -76,16 +74,16 @@ s2RPN(s : string) -> string {
 }
 
 RPN2s(RPN : string) -> string {
-    AST2s(RNP2AST(RPN));
+    AST2s(RPN2AST(RPN));
 }
 
-putVarInTree() -> Tree<string, double> {
-    vars = strSplit(getUrlParameter("Variables"), ",");
-    fold(vars, makeTree(), \tree, var -> {setTree(tree, var, s2d(getUrlParameter(var)))});
+RPN2AST(RPN : string) ->  ArithmeticsExpression{
+    parsic(RPNGrammar(), RPN, defaultPegActions);
 }
 
 main() {
     s = readUntil("\n");
-    println(RPN2s(s));
+    println(s2RPN(s));
+    println(RPN2s(s2RPN(s)));
     quit(0);
 }

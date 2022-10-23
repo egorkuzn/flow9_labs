@@ -1,14 +1,14 @@
 arithmetical_exp = multiplication | division | addition | subtraction | variable | double;
 
-multiplication = white_space "(" white_space arithmetical_exp:left white_space " " white_space arithmetical_exp:right white_space " *" white_space ")" white_space {Multiplication(:left, :right)};
-division       = white_space "(" white_space arithmetical_exp:left white_space " " white_space arithmetical_exp:rigth white_space " /" white_space ")" white_space {Division      (:left, :rigth)};
-addition       = white_space "(" white_space arithmetical_exp:left white_space " " white_space arithmetical_exp:rigth white_space " +" white_space ")" white_space {Addition      (:left, :rigth)};
-subtraction    = white_space "(" white_space arithmetical_exp:left white_space " " white_space arithmetical_exp:rigth white_space " -" white_space ")" white_space {Substruction  (:left, :rigth)};
-variable       = white_space letter_+$variable white_space                                                                                                        {Variable      (  $variable  )};
-double         = white_space double_$double   white_space                                                                                                         {Double        ( s2d($double))};
+multiplication = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "*" ws ")" {Multiplication(:left, :right)};
+division       = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "/" ws ")" {Division      (:left, :right)};
+addition       = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "+" ws ")" {Addition      (:left, :right)};
+subtraction    = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "-" ws ")" {Substruction  (:left, :right)};
+variable       = ws letter_+$variable ws                                                    {Variable      (  $variable  )};
+double         = ws double_$double ws                                                      {Double        ( s2d($double))};
 
-
-white_space = (" " | "\t" | "\n" | "\r")*;
-double_     = "-"? digit+ "."? digit*;
-digit       = '0' - '9';
-letter_     = 'a' - 'z' | 'A' - 'Z';
+ws = (" " | "\t" | "\n" | "\r")*;
+sp = (" " | "\t" | "\n" | "\r")?;
+double_ = '-'? digit+ '.'? digit*;
+digit   = '0' - '9';
+letter_ = 'A' - 'Z' | 'a' - 'z';
