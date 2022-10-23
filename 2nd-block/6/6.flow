@@ -19,7 +19,7 @@ Double        (val  : double);
 
 
 AST2RPN(AST: Exp) -> {
-    
+
 }
 
 RNP2AST(RPN: Exp) -> Exp {
@@ -42,23 +42,28 @@ s2AST(s: string) {
     parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
 }
 
-AST2d(AST: Exp, varTree: Tree<string, double>) -> double {
+AST2d(AST: Exp, varsTree: Tree<string, double>) -> double {
     switch (AST) {
-        Multiplication(l, r): AST2d(l, varTree) * AST2d(r, varTree);
-        Division      (l, r): AST2d(l, varTree) / AST2d(r, varTree);
-        Addition      (l, r): AST2d(l, varTree) + AST2d(r, varTree);
-        Substruction  (l, r): AST2d(l, varTree) - AST2d(r, varTree);
+        Multiplication(l, r): AST2d(l, varsTree) * AST2d(r, varsTree);
+        Division      (l, r): AST2d(l, varsTree) / AST2d(r, varsTree);
+        Addition      (l, r): AST2d(l, varsTree) + AST2d(r, varsTree);
+        Substruction  (l, r): AST2d(l, varsTree) - AST2d(r, varsTree);
         Double        (val) : val;
-        Variable      (var) : lookupTreeDef(varTree, var, doubleMin);
+        Variable      (var) : lookupTreeDef(varsTree, var, doubleMin);
     }
 }
 
 s2RPN(s : string) -> string {
-    AST2RPN(s2AST(s))
+    AST2RPN(s2AST(s));
 }
 
 RPN2s(s : string) -> string {
-    AST2s(RNP2AST(s))
+    AST2s(RNP2AST(s));
+}
+
+putVarInTree() -> Tree<string, double> {
+    vars = strSplit(getUrlParameter("Variables"), ",");
+    
 }
 
 main() {
