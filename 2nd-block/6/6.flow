@@ -5,12 +5,14 @@ import string;
 import sys/system;
 import lingo/pegcode/driver;
 
-ArithmeticsExpression ::= Addition, Multiplication, Substruction, Division, Integer;
-Addition      (left : ArithmeticsExpression, right : ArithmeticsExpression);
+ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Variable, Double;
+
 Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Division      (left : ArithmeticsExpression, right : ArithmeticsExpression);
-Integer       (val : int);
+Addition      (left : ArithmeticsExpression, right : ArithmeticsExpression);
+Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
+Variable      (var  : string);
+Double        (val  : double);
 
 AST2RPN(AST: Exp) -> {
 }
