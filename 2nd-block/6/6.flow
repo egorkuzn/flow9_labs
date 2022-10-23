@@ -24,7 +24,11 @@ arithmeticsGrammar() {
     });
 }
 
-
+RPNGrammar() {
+    onlyOnce(calcGrammarInited, \ -> {
+        compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\rpn.lingo")
+    });
+}
 
 AST2RPN(AST: Exp) -> {
 
