@@ -1,14 +1,33 @@
 // 6) Реализуйте калькулятор для обратной польской записи (RPN) арифметических выражений.
 // Напишите функции перевода арифметический выражений в RPN и наоборот.
 import runtime;
+import string;
 import sys/system;
+import lingo/pegcode/driver;
+
+ArithmeticsExpression ::= Addition, Multiplication, Substruction, Division, Integer;
+Addition(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Substruction(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Division(left : ArithmeticsExpression, right : ArithmeticsExpression);
+Integer(val : int);
 
 AST2RPN(AST: Exp) -> {
-
 }
 
 AST2s(AST: Exp) -> string {
-
+    switch(exp) {
+        Multiplication(l, r):
+            concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
+        Division(l, r):
+            concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
+        Addition(l, r):
+            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
+        Substruction(l, r):
+            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
+        Integer(val):
+            i2s(val);
+    }
 }
 
 RNP2AST(RPN: Exp) -> Exp {
@@ -16,7 +35,8 @@ RNP2AST(RPN: Exp) -> Exp {
 }
 
 s2AST(s: string) {
-    
+    arithmetics_grammar = "#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo";
+    parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
 }
 
 s2RPN(s : string) -> string {
