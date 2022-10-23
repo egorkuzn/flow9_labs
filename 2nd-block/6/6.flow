@@ -26,22 +26,22 @@ arithmeticsGrammar() {
 
 RPNGrammar() {
     onlyOnce(calcGrammarInited, \ -> {
-        compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\rpn.lingo")
+        compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\6\RPN.lingo")
     });
 }
 
 AST2RPN(AST: ArithmeticsExpression) -> string {
     switch (AST) {
-        Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "*)"]);
-        Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "/)"]);
-        Addition      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "+)"]);
-        Substruction  (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "-)"]);
+        Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " *)"]);
+        Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " /)"]);
+        Addition      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " +)"]);
+        Substruction  (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " -)"]);
         Double        (val) : d2s(val);
         Variable      (var) : var;
     }
 }
-
-RNP2AST(RPN: string) -> ArithmeticsExpression {
+// failed to parse
+RNP2AST(RPN: string) ->  ArithmeticsExpression{
     parsic(RPNGrammar(), RPN, defaultPegActions);
 }
 
@@ -56,7 +56,7 @@ AST2s(AST: ArithmeticsExpression) -> string {
     }
 }
 
-s2AST(s: string) {
+s2AST(s: string) -> ArithmeticsExpression{
     parsic(arithmeticsGrammar(), s, defaultPegActions);
 }
 
@@ -86,7 +86,6 @@ putVarInTree() -> Tree<string, double> {
 
 main() {
     s = readUntil("\n");
-    println(s2RPN(s));
-    println(RPN2s(s2RPN(s)));
+    println(RPN2s(s));
     quit(0);
 }
