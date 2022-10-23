@@ -2,7 +2,9 @@
 // Напишите функции перевода арифметический выражений в RPN и наоборот.
 import runtime;
 import string;
+import math/math;
 import sys/system;
+import lindo/pegcode/parsic;
 import lingo/pegcode/driver;
 
 ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Variable, Double;
@@ -17,6 +19,7 @@ Double        (val  : double);
 
 
 AST2RPN(AST: Exp) -> {
+    
 }
 
 RNP2AST(RPN: Exp) -> Exp {
@@ -25,24 +28,29 @@ RNP2AST(RPN: Exp) -> Exp {
 
 AST2s(AST: Exp) -> string {
     switch(exp) {
-        Multiplication(l, r):
-            concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
-        Division(l, r):
-            concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
-        Addition(l, r):
-            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
-        Substruction(l, r):
-            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
-        Double(val):
-            d2s(val);
-        Var(var):
-            var;
+        Multiplication(l, r): concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
+        Division      (l, r): concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
+        Addition      (l, r): concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
+        Substruction  (l, r): concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
+        Double        (val) : d2s(val);
+        Variable      (var) : var;
     }
 }
 
 s2AST(s: string) {
     arithmetics_grammar = "#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo";
     parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
+}
+
+AST2d(AST: Exp, varTree: Tree<string, double>) -> double {
+    switch (AST) {
+        Multiplication(l, r): AST2d(l, varTree) * AST2d(r, varTree);
+        Division      (l, r): AST2d(l, varTree) / AST2d(r, varTree);
+        Addition      (l, r): AST2d(l, varTree) + AST2d(r, varTree);
+        Substruction  (l, r): AST2d(l, varTree) - AST2d(r, varTree);
+        Double        (val) : val;
+        Variable      (var) : lookupTreeDef(varTree, var, doubleMin);
+    }
 }
 
 s2RPN(s : string) -> string {
