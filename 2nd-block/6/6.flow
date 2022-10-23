@@ -63,7 +63,7 @@ RPN2s(s : string) -> string {
 
 putVarInTree() -> Tree<string, double> {
     vars = strSplit(getUrlParameter("Variables"), ",");
-    
+    fold(vars, makeTree(), \tree, var -> {setTree(tree, var, s2d(getUrlParameter(var)))});
 }
 
 main() {
