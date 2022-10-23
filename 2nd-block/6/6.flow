@@ -3,12 +3,13 @@
 import runtime;
 import sys/system;
 
-s2RPN(s : string) -> string{
 
+s2RPN(s : string) -> string{
+    AST2RPN(s2AST(s))
 }
 
 RPN2s(s : string) -> string{
-    
+    AST2s(RNP2AST(s))
 }
 
 main() {
