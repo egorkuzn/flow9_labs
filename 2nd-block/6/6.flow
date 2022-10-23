@@ -14,7 +14,13 @@ Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Variable      (var  : string);
 Double        (val  : double);
 
+
+
 AST2RPN(AST: Exp) -> {
+}
+
+RNP2AST(RPN: Exp) -> Exp {
+
 }
 
 AST2s(AST: Exp) -> string {
@@ -27,13 +33,11 @@ AST2s(AST: Exp) -> string {
             concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
         Substruction(l, r):
             concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
-        Integer(val):
-            i2s(val);
+        Double(val):
+            d2s(val);
+        Var(var):
+            var;
     }
-}
-
-RNP2AST(RPN: Exp) -> Exp {
-
 }
 
 s2AST(s: string) {
