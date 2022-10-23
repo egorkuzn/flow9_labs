@@ -1,41 +1,19 @@
-// 6) Преобразовать AST дерево арифметических 
-// выражений обратно в строковую форму.
-
+// 6) Реализуйте калькулятор для обратной польской записи (RPN) арифметических выражений.
+// Напишите функции перевода арифметический выражений в RPN и наоборот.
 import runtime;
-import string;
 import sys/system;
-import lingo/pegcode/driver;
 
-ArithmeticsExpression ::= Addition, Multiplication, Substruction, Division, Integer;
-Addition(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Substruction(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Division(left : ArithmeticsExpression, right : ArithmeticsExpression);
-Integer(val : int);
+s2RPN(s : string) -> string{
 
-
-s2AST(s : string) -> ArithmeticsExpression {
-    arithmetics_grammar = "#include 2nd-block\5\arithmetics.lingo";
-    parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
 }
 
-AST2s(exp : ArithmeticsExpression) -> string{
-    switch(exp) {
-        Addition(l, r):
-            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
-        Multiplication(l, r):
-            concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
-        Substruction(l, r):
-            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
-        Division(l, r):
-            concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
-        Integer(val):
-            i2s(val);
-    }
+RPN2s(s : string) -> string{
+    
 }
 
-main(){
+main() {
     s = readUntil("\n");
-    println(AST2s(s2AST(s)));
+    println(s2RPN(s));
+    println(RPN2s(s2RPN(s)));
     quit(0);
 }

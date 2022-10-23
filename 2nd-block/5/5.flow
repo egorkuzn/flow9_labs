@@ -1,5 +1,7 @@
-// 7) Реализовать калькулятор, вычисляющий
-// значение арифметического выражения.
+// 5) Реализуйте PEG-парсер для грамматики простых арифметических выражений (целые
+// константы, операции + и *), который порождает дерево синтаксического разбора. Используйте
+// библиотеку lingo. Преобразуйте дерево обратно в строку. Реализуйте калькулятор,
+// вычисляющий значение арифметического выражения.
 
 import runtime;
 import string;
@@ -21,14 +23,14 @@ s2AST(s : string) -> ArithmeticsExpression {
 
 AST2s(exp : ArithmeticsExpression) -> string{
     switch(exp) {
-        Addition(l, r):
-            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
         Multiplication(l, r):
             concatStrings(["(", AST2s(l), "*", AST2s(r), ")"]);
-        Substruction(l, r):
-            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
         Division(l, r):
             concatStrings(["(", AST2s(l), "/", AST2s(r), ")"]);
+        Addition(l, r):
+            concatStrings(["(", AST2s(l), "+", AST2s(r), ")"]);
+        Substruction(l, r):
+            concatStrings(["(", AST2s(l), "-", AST2s(r), ")"]);
         Integer(val):
             i2s(val);
     }
@@ -38,17 +40,17 @@ AST2i(exp : ArithmeticsExpression) -> int{
     switch(exp) {
         Integer(val):
             val;
-        Addition(l, r):
-            AST2i(l) + AST2i(r);
         Multiplication(l, r):
             AST2i(l) * AST2i(r);
-        Substruction(l, r):
-            AST2i(l) - AST2i(r);
         Division(l, r):{
             right_part = AST2i(r);
             assert(right_part != 0, "Division by zero");
             AST2i(l) / right_part;
         }
+        Addition(l, r):
+            AST2i(l) + AST2i(r);
+        Substruction(l, r):
+            AST2i(l) - AST2i(r);
     }
 }
 

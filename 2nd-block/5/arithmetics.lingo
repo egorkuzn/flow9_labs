@@ -1,4 +1,4 @@
-arithmetical_exp = addition | multiplication | subtraction | division | integer;
+arithmetical_exp = multiplication | division | addition | subtraction | integer;
 white_space = (" " | "\t" | "\n" | "\r")*;
 
 addition = white_space "(" white_space arithmetical_exp:left white_space "+" white_space arithmetical_exp:rigth white_space ")" white_space {Addition(:left, :rigth)};
@@ -6,5 +6,6 @@ multiplication = white_space "(" white_space arithmetical_exp:left white_space "
 subtraction = white_space "(" white_space arithmetical_exp:left white_space "-" white_space arithmetical_exp:rigth white_space ")" white_space {Substruction(:left, :rigth)};
 division = white_space "(" white_space arithmetical_exp:left white_space "/" white_space arithmetical_exp:rigth white_space ")" white_space {Division(:left, :rigth)};
 
-integer = white_space digit+$digit white_space {Integer(s2i($digit))};
+integer = white_space integer_$digit white_space {Integer(s2i($digit))};
+integer_ = '-'? digit+ '.'? digit*;
 digit = '0' - '9';
