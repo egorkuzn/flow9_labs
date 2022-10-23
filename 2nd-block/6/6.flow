@@ -32,12 +32,12 @@ RPNGrammar() {
 
 AST2RPN(AST: Exp) -> {
     switch (AST) {
-        Multiplication(l, r):
-        Division      (l, r):
-        Addition      (l, r):
-        Substruction  (l, r):
-        Double        (val) :
-        Variable      (var) :
+        Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "*)"]);
+        Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "/)"]);
+        Addition      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "+)"]);
+        Substruction  (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), "-)"]);
+        Double        (val) : d2s(val);
+        Variable      (var) : var;
     }
 }
 
