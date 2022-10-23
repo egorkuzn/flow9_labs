@@ -32,7 +32,12 @@ RPNGrammar() {
 
 AST2RPN(AST: Exp) -> {
     switch (AST) {
-
+        Multiplication(l, r):
+        Division      (l, r):
+        Addition      (l, r):
+        Substruction  (l, r):
+        Double        (val) :
+        Variable      (var) :
     }
 }
 
