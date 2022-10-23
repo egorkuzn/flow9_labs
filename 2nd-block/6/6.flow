@@ -16,7 +16,13 @@ Substruction  (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Variable      (var  : string);
 Double        (val  : double);
 
+calcGrammarInited : ref Maybe<[PegOp]> = ref None();
 
+arithmeticsGrammar() {
+    onlyOnce(calcGrammarInited, \ -> {
+        compilePegGrammar("#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo")
+    });
+}
 
 AST2RPN(AST: Exp) -> {
 
@@ -38,7 +44,6 @@ AST2s(AST: Exp) -> string {
 }
 
 s2AST(s: string) {
-    arithmetics_grammar = "#include C:\Users\egork\source\flow9\labs\2nd-block\5\arithmetics.lingo";
     parsic(compilePegGrammar(arithmetics_grammar), s, defaultPegActions);
 }
 
