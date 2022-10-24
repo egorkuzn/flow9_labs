@@ -98,9 +98,134 @@ RPN2d(RPN : string, varsTree: Tree<string, double>) -> double {
     AST2d(RPN2AST(RPN), varsTree);
 }
 
-simplify(AST: ArithmeticsExpression){
+simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
     switch(AST) {
-        
+        Addition      (l, r): {
+            l_ = simplify(l);
+            r_ = simplify(r);
+
+            if(l_ == Double(0.0)) {
+                r_;
+            } else if(r_ == Double(0.0)) {
+                l_;
+            } else if(r_ == l_) {
+                Multiplication(Double(2.0), l_);
+            } else {
+                switch(l_) {
+                    Multiplication(l1, r1): {
+                        switch(r_) {
+                            Multiplication(l2, r2):{
+                                if(l1 == l2) {
+                                    l1_ = simplify(l1);
+                                    r1_ = simplify(r1);
+                                    r2_ = simplify(r2);
+                                    Multiplication(l1_, Addition(r1_, r2_));
+                                } else if(r1 == r2) {
+                                    l1_ = simplify(l1);
+                                    r1_ = simplify(r1);
+                                    l2_ = simplify(l2);
+                                    Multiplication(Addition(l1_, l2_), r1_);
+                                } else if(r1 == l2) {
+                                    l1_ = simplify(l1);
+                                    r1_ = simplify(r1);
+                                    r2_ = simplify(r2);
+                                    Multiplication(Addition(l1_, r2_), r1_);
+                                } else if(l1 == r2) {
+                                    l2_ = simplify(l2);
+                                    r1_ = simplify(r1);
+                                    r2_ = simplify(r2);
+                                    Multiplication(Addition(l2_, r1_), r2_);
+                                } else {
+                                    Addition(l_, r_);
+                                }
+                            }
+
+                            default: Addition(l_, r_);
+                        }
+                    }
+
+                    default: Addition(l_, r_);
+                }                            
+            }
+        }
+        Substruction  (l, r): {
+            l_ = simplify(l);
+            r_ = simplify(r);
+
+            if(l_ == r_) {
+                Double(0.0);
+            } else if(r_ == Double(0.0)) {
+                l_;
+            } else {
+                Substruction(l_, r_);
+            }            
+        }
+        Multiplication(l, r): {
+            l_ = simplify(l);
+            r_ = simplify(r);
+
+            if(l_ == Double(1.0)) {
+                r_;
+            } else if(r_ == Double(1.0)) {
+                l_;
+            } else if(l_ == Double(0.0) || r_ == Double(0.0)){
+                Double(0.0);
+            } else if(l_ == r_) {
+                Involution(l_, Double(2.0));
+            } else {
+                switch(l_) {
+                    Involution(l1, r1): {
+                        if(l1 == r_) {
+                            Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
+                        } else {
+                            Multiplication(l_, r_);
+                        }
+                    }
+
+                    default: switch(r_) {
+                            Involution(l1, r1): {
+                                if(l1 == l_) {
+                                    Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
+                                } else {
+                                    Multiplication(l_, r_);
+                                }
+                            }
+                            default: Multiplication(l_, r_);
+                    }
+                }
+                Multiplication(l_, r_);                
+            }
+        }
+        Division      (l, r): {
+            l_ = simplify(l);
+            r_ = simplify(r);
+
+            if(r_ == Double(1.0)) {
+                l_;
+            } else if(l_ == Double(0.0)){
+                Double(0.0);
+            } else if(l_ == r_) {
+                Double(1.0);
+            } else {
+                switch(l_) {
+                    Involution(l1, r1): {
+                        if(l1 == r_) {
+                            Involution(simplify(l1), simplify(Substruction(simplify(r1), Double(1.0))));
+                        } else {
+                            Division(l_, r_);
+                        }
+                    }
+
+                    default: Division(l_, r_);
+                }
+            }
+        }
+        Involution    (l, r): {
+            l_ = simplify(l);
+            r_ = simplify(r);
+            Involution(l_, r_);
+        }
+        default             : AST;
     }
 }
 
@@ -110,6 +235,6 @@ main() {
     println(s2RPN(s));
     println(RPN2s(s2RPN(s)));
     println(RPN2d(s2RPN(s), varsTree));
-    println(s2AST(s));
+    println(AST2s(simplify(s2AST(s))));
     quit(0);
 }
