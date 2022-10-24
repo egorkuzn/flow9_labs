@@ -157,6 +157,7 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
             } else if(r_ == Double(0.0)) {
                 l_;
             } else {
+                //Пиши, если охота. Я устал
                 Substruction(l_, r_);
             }            
         }
