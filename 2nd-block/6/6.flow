@@ -111,6 +111,7 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
             } else if(r_ == l_) {
                 Multiplication(Double(2.0), l_);
             } else {
+                // x*y + x*z = x*(y+z)
                 switch(l_) {
                     Multiplication(l1, r1): {
                         switch(r_) {
@@ -234,34 +235,46 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
     }
 }
 
-diff(AST : ArithmeticsExpression) {
+diff(AST : ArithmeticsExpression, diffVar: Variable) -> ArithmeticsExpression {
     switch(AST) {
         Involution(l, r){
-
+            //(a^b) = b*(a^(b-1))*a'
+            Multiplication(r, Multiplication(Involution(l, Substruction(r, Double(1.0))), diff(l, diffVar)));
         }
 
         Multiplication(l, r){
-
+            //(a*b)' = a'*b + a*b'
+            Addition(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar)));
         }
 
         Division(l, r){
-
+            //(a/b)' = (a'*b - a*b')/(b^2)
+            Division(Substruction(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar))), Involution(r, Double(2.0)));
         }
 
         Addition(l, r){
-
+            //(a+b)' = a' + b'
+            Addition(diff(l, diffVar), diff(r, diffVar));
         }
 
         Substruction(l, r){
-
+            //(a-b)' = a' - b'
+            Substruction(diff(l, diffVar), diff(r, diffVar));
         }
 
         Double(val){
-
+            //const' = 0
+            Double(0.0);
         }
 
-        Variable(var){
-
+        Variable(var){        
+            if(var == diffVar) {
+                //x/dx = 1
+                Double(1.0);
+            } else {
+                //x/dy = 0
+                Double(0.0);
+            }
         }
     }
 }
