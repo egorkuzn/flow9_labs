@@ -35,6 +35,11 @@ RPNGrammar() {
     });
 }
 
+putVarsIntoTree() {
+    vars = strSplit(getUrlParameter("Variables"), ",");
+    fold(vars, makeTree(), \tree, var -> {setTree(tree, var, s2d(getUrlParameter(var)))});
+}
+
 AST2RPN(AST : ArithmeticsExpression) -> string {
     switch (AST) {
         Involution    (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " ^)"]);
@@ -94,9 +99,11 @@ RPN2d(RPN : string, varsTree: Tree<string, double>) -> double {
 }
 
 main() {
+    varsTree = putVarsIntoTree();
     s = readUntil("\n");
     println(s2RPN(s));
     println(RPN2s(s2RPN(s)));
-    println(RPN2d())
+    println(RPN2d(s2RPN(s), varsTree));
+    
     quit(0);
 }
