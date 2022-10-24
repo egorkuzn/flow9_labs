@@ -98,12 +98,18 @@ RPN2d(RPN : string, varsTree: Tree<string, double>) -> double {
     AST2d(RPN2AST(RPN), varsTree);
 }
 
+simplify(AST: ArithmeticsExpression){
+    switch(AST) {
+        
+    }
+}
+
 main() {
     varsTree = putVarsIntoTree();
     s = readUntil("\n");
     println(s2RPN(s));
     println(RPN2s(s2RPN(s)));
     println(RPN2d(s2RPN(s), varsTree));
-    
+    println(s2AST(s));
     quit(0);
 }
