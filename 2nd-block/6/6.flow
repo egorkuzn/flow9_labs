@@ -100,7 +100,7 @@ RPN2d(RPN : string, varsTree: Tree<string, double>) -> double {
 
 simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
     switch(AST) {
-        Addition      (l, r): {
+        Addition(l, r): {
             l_ = simplify(l);
             r_ = simplify(r);
 
@@ -148,7 +148,8 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
                 }                            
             }
         }
-        Substruction  (l, r): {
+
+        Substruction(l, r): {
             l_ = simplify(l);
             r_ = simplify(r);
 
@@ -161,6 +162,7 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
                 Substruction(l_, r_);
             }            
         }
+
         Multiplication(l, r): {
             l_ = simplify(l);
             r_ = simplify(r);
@@ -194,10 +196,10 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
                             default: Multiplication(l_, r_);
                     }
                 }
-                Multiplication(l_, r_);                
             }
         }
-        Division      (l, r): {
+
+        Division(l, r): {
             l_ = simplify(l);
             r_ = simplify(r);
 
@@ -221,12 +223,46 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
                 }
             }
         }
-        Involution    (l, r): {
+
+        Involution(l, r): {
             l_ = simplify(l);
             r_ = simplify(r);
             Involution(l_, r_);
         }
-        default             : AST;
+
+        default: AST;
+    }
+}
+
+diff(AST : ArithmeticsExpression) {
+    switch(AST) {
+        Involution(l, r){
+
+        }
+
+        Multiplication(l, r){
+
+        }
+
+        Division(l, r){
+
+        }
+
+        Addition(l, r){
+
+        }
+
+        Substruction(l, r){
+
+        }
+
+        Double(val){
+
+        }
+
+        Variable(var){
+
+        }
     }
 }
 
@@ -237,5 +273,7 @@ main() {
     println(RPN2s(s2RPN(s)));
     println(RPN2d(s2RPN(s), varsTree));
     println(AST2s(simplify(s2AST(s))));
+    diffVar = readUntil("\n");
+    println(simplify(AST2s(diff(simplify(s2AST(s)), diffVar))));
     quit(0);
 }
