@@ -235,46 +235,46 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
     }
 }
 
-diff(AST : ArithmeticsExpression, diffVar: Variable) -> ArithmeticsExpression {
+diff(AST : ArithmeticsExpression, diffVar: string) -> ArithmeticsExpression {
     switch(AST) {
-        Involution(l, r){
+        Involution(l, r): {
             //(a^b) = b*(a^(b-1))*a'
             Multiplication(r, Multiplication(Involution(l, Substruction(r, Double(1.0))), diff(l, diffVar)));
         }
 
-        Multiplication(l, r){
+        Multiplication(l, r): {
             //(a*b)' = a'*b + a*b'
             Addition(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar)));
         }
 
-        Division(l, r){
+        Division(l, r): {
             //(a/b)' = (a'*b - a*b')/(b^2)
             Division(Substruction(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar))), Involution(r, Double(2.0)));
         }
 
-        Addition(l, r){
+        Addition(l, r): {
             //(a+b)' = a' + b'
             Addition(diff(l, diffVar), diff(r, diffVar));
         }
 
-        Substruction(l, r){
+        Substruction(l, r): {
             //(a-b)' = a' - b'
             Substruction(diff(l, diffVar), diff(r, diffVar));
         }
 
-        Double(val){
-            //const' = 0
-            Double(0.0);
-        }
-
-        Variable(var){        
+        Variable(var): {  
             if(var == diffVar) {
                 //x/dx = 1
                 Double(1.0);
-            } else {
+            } else {                
                 //x/dy = 0
                 Double(0.0);
             }
+        }
+
+        Double(val): {
+            //const' = 0
+            Double(0.0);
         }
     }
 }
@@ -287,6 +287,6 @@ main() {
     println(RPN2d(s2RPN(s), varsTree));
     println(AST2s(simplify(s2AST(s))));
     diffVar = readUntil("\n");
-    println(simplify(AST2s(diff(simplify(s2AST(s)), diffVar))));
+    println(AST2s(diff(simplify(s2AST(s)), diffVar)));
     quit(0);
 }
