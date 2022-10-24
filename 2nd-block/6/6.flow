@@ -1,5 +1,7 @@
-// 6) Реализуйте калькулятор для обратной польской записи (RPN) арифметических выражений.
+// а) Реализуйте калькулятор для обратной польской записи (RPN) арифметических выражений.
 // Напишите функции перевода арифметический выражений в RPN и наоборот.
+// б) Степень, дроби, переменные рациональное выражение, вычисление
+
 import runtime;
 import string;
 import math/math;
@@ -7,8 +9,9 @@ import sys/system;
 import lingo/pegcode/parsic;
 import lingo/pegcode/driver;
 
-ArithmeticsExpression ::= Multiplication, Division, Addition, Substruction, Double, Variable;
+ArithmeticsExpression ::= Involution, Multiplication, Division, Addition, Substruction, Double, Variable;
 
+Involution    (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Multiplication(left : ArithmeticsExpression, right : ArithmeticsExpression);
 Division      (left : ArithmeticsExpression, right : ArithmeticsExpression);
 Addition      (left : ArithmeticsExpression, right : ArithmeticsExpression);
@@ -34,6 +37,7 @@ RPNGrammar() {
 
 AST2RPN(AST : ArithmeticsExpression) -> string {
     switch (AST) {
+        Involution    (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " ^)"]);
         Multiplication(l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " *)"]);
         Division      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " /)"]);
         Addition      (l, r): concatStrings(["(", AST2RPN(l), " ", AST2RPN(r), " +)"]);
@@ -45,6 +49,7 @@ AST2RPN(AST : ArithmeticsExpression) -> string {
 
 AST2s(AST : ArithmeticsExpression) -> string {
     switch (AST) {
+        Involution    (l, r): concatStrings(["(", AST2s(l), " ^ ", AST2s(r), ")"]);
         Multiplication(l, r): concatStrings(["(", AST2s(l), " * ", AST2s(r), ")"]);
         Division      (l, r): concatStrings(["(", AST2s(l), " / ", AST2s(r), ")"]);
         Addition      (l, r): concatStrings(["(", AST2s(l), " + ", AST2s(r), ")"]);
@@ -60,10 +65,13 @@ s2AST(s : string) -> ArithmeticsExpression{
 
 AST2d(AST : ArithmeticsExpression, varsTree: Tree<string, double>) -> double {
     switch (AST) {
-        Multiplication(l, r): AST2d(l, varsTree) * AST2d(r, varsTree);
-        Division      (l, r): AST2d(l, varsTree) / AST2d(r, varsTree);
-        Addition      (l, r): AST2d(l, varsTree) + AST2d(r, varsTree);
-        Substruction  (l, r): AST2d(l, varsTree) - AST2d(r, varsTree);
+        Involution    (l, r): dpow(AST2d(l, varsTree) , AST2d(r, varsTree));
+        Multiplication(l, r):      AST2d(l, varsTree) * AST2d(r, varsTree);
+        Division      (l, r): {a = AST2d(l, varsTree);
+                               b = AST2d(r, varsTree);
+                                                    a / b;}
+        Addition      (l, r):      AST2d(l, varsTree) + AST2d(r, varsTree);
+        Substruction  (l, r):      AST2d(l, varsTree) - AST2d(r, varsTree);
         Double        (val) : val;
         Variable      (var) : lookupTreeDef(varsTree, var, doubleMin);
     }
@@ -81,9 +89,14 @@ RPN2AST(RPN : string) ->  ArithmeticsExpression{
     parsic(RPNGrammar(), RPN, defaultPegActions);
 }
 
+RPN2d(RPN : string, varsTree: Tree<string, double>) -> double {
+    AST2d(RPN2AST(RPN), varsTree);
+}
+
 main() {
     s = readUntil("\n");
     println(s2RPN(s));
     println(RPN2s(s2RPN(s)));
+    println(RPN2d())
     quit(0);
 }

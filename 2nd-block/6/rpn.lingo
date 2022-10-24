@@ -1,5 +1,6 @@
-arithmetical_exp = multiplication | division | addition | subtraction | variable | double;
+arithmetical_exp = involution | multiplication | division | addition | subtraction | variable | double;
 
+involution     = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "^" ws ")" {Involution    (:left, :right)};
 multiplication = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "*" ws ")" {Multiplication(:left, :right)};
 division       = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "/" ws ")" {Division      (:left, :right)};
 addition       = "(" ws arithmetical_exp:left sp arithmetical_exp:right sp "+" ws ")" {Addition      (:left, :right)};
