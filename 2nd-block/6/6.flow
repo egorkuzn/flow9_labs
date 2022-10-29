@@ -111,7 +111,7 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
             } else if(r_ == l_) {
                 Multiplication(Double(2.0), l_);
             } else {
-                // x*y + x*z = x*(y+z)
+                // x*y + x*z = x*(y+z) 
                 switch(l_) {
                     Multiplication(l1, r1): {
                         switch(r_) {
@@ -177,26 +177,27 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
             } else if(l_ == r_) {
                 Involution(l_, Double(2.0));
             } else {
-                switch(l_) {
-                    Involution(l1, r1): {
-                        if(l1 == r_) {
-                            Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
-                        } else {
-                            Multiplication(l_, r_);
-                        }
-                    }
+                Multiplication(l_, r_);
+                // switch(l_) {
+                //     Involution(l1, r1): {
+                //         if(l1 == r_) {
+                //             Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
+                //         } else {
+                //             Multiplication(l_, r_);
+                //         }
+                //     }
 
-                    default: switch(r_) {
-                            Involution(l1, r1): {
-                                if(l1 == l_) {
-                                    Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
-                                } else {
-                                    Multiplication(l_, r_);
-                                }
-                            }
-                            default: Multiplication(l_, r_);
-                    }
-                }
+                //     default: switch(r_) {
+                //             Involution(l1, r1): {
+                //                 if(l1 == l_) {
+                //                     Involution(simplify(l1), simplify(Addition(simplify(r1), Double(1.0))));
+                //                 } else {
+                //                     Multiplication(l_, r_);
+                //                 }
+                //             }
+                //             default: Multiplication(l_, r_);
+                //     }
+                // }
             }
         }
 
@@ -235,35 +236,50 @@ simplify(AST: ArithmeticsExpression) -> ArithmeticsExpression {
     }
 }
 
-diff(AST : ArithmeticsExpression, diffVar: string) -> ArithmeticsExpression {
+diff(AST : ArithmeticsExpression, diffVar: string, varsTree: Tree<string, double>) -> ArithmeticsExpression {
     switch(AST) {
         Involution(l, r): {
-            //(a^b) = b*(a^(b-1))*a'
-            Multiplication(r, Multiplication(Involution(l, Substruction(r, Double(1.0))), diff(l, diffVar)));
+            //(l(x)^r(x)) = l(x) ^ r(x) * (r'(x) * ln(f(x)) + r(x) * l'(x) / l(x))
+            Multiplication(
+                Involution(l, r),
+                Addition(
+                    Multiplication(
+                        diff(r, diffVar, varsTree),
+                        Double(log(AST2d(l, varsTree)))
+                    ),
+                    Multiplication(
+                        r,
+                        Division(
+                            diff(l, diffVar, varsTree),
+                            l
+                        )
+                    )
+                )
+            );
         }
 
         Multiplication(l, r): {
             //(a*b)' = a'*b + a*b'
-            Addition(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar)));
+            Addition(Multiplication(diff(l, diffVar, varsTree), r), Multiplication(l, diff(r, diffVar, varsTree)));
         }
 
         Division(l, r): {
             //(a/b)' = (a'*b - a*b')/(b^2)
-            Division(Substruction(Multiplication(diff(l, diffVar), r), Multiplication(l, diff(r, diffVar))), Involution(r, Double(2.0)));
+            Division(Substruction(Multiplication(diff(l, diffVar, varsTree), r), Multiplication(l, diff(r, diffVar, varsTree))), Involution(r, Double(2.0)));
         }
 
         Addition(l, r): {
             //(a+b)' = a' + b'
-            Addition(diff(l, diffVar), diff(r, diffVar));
+            Addition(diff(l, diffVar, varsTree), diff(r, diffVar, varsTree));
         }
 
         Substruction(l, r): {
             //(a-b)' = a' - b'
-            Substruction(diff(l, diffVar), diff(r, diffVar));
+            Substruction(diff(l, diffVar, varsTree), diff(r, diffVar, varsTree));
         }
 
-        Variable(var): {  
-            if(var == diffVar) {
+        Variable(var): { 
+            if(diffVar == var) {
                 //x/dx = 1
                 Double(1.0);
             } else {                
@@ -286,7 +302,8 @@ main() {
     println(RPN2s(s2RPN(s)));
     println(RPN2d(s2RPN(s), varsTree));
     println(AST2s(simplify(s2AST(s))));
-    diffVar = readUntil("\n");
-    println(AST2s(diff(simplify(s2AST(s)), diffVar)));
+    diffVar_ = readUntil("\n");
+    diffVar = substring(diffVar_, 0, strlen(diffVar_) - 1);
+    println(AST2s(simplify(diff(simplify(s2AST(s)), diffVar, varsTree))));
     quit(0);
 }
